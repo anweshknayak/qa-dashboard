@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const mongoose = require('mongoose');
 const test = require('./routes/testcase.route'); // Imports routes for the products
 const app = express();
 
@@ -8,6 +8,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/testcase', test);
+
+// Set up mongoose connection
+let dev_db_url = 'mongodb+srv://TestUserAdmin:testuseradmin@cluster0-xbke9.mongodb.net/test?retryWrites=true';
+let mongoDB = process.env.MONGODB_URI || dev_db_url;
+mongoose.connect(mongoDB);
+mongoose.Promise = global.Promise;
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 let port = 1234;
 app.listen(port, () => {
